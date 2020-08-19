@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-07-30T03:49:45.994Z</updated>
+  <updated>2020-08-18T23:49:15.062Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,25 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>iOS 自动化 - 打包</title>
+    <link href="http://yoursite.com/2020/08/19/iOS-%E8%87%AA%E5%8A%A8%E5%8C%96-%E6%89%93%E5%8C%85/"/>
+    <id>http://yoursite.com/2020/08/19/iOS-%E8%87%AA%E5%8A%A8%E5%8C%96-%E6%89%93%E5%8C%85/</id>
+    <published>2020-08-18T23:47:42.000Z</published>
+    <updated>2020-08-18T23:49:15.062Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+      <category term="自动化" scheme="http://yoursite.com/categories/%E8%87%AA%E5%8A%A8%E5%8C%96/"/>
+    
+    
+      <category term="自动化" scheme="http://yoursite.com/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"/>
+    
+  </entry>
   
   <entry>
     <title>Hello World</title>
