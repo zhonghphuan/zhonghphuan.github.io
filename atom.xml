@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-08-22T07:54:59.596Z</updated>
+  <updated>2020-08-22T07:58:20.032Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -21,18 +21,13 @@
     <link href="http://yoursite.com/2020/08/22/%E5%85%B3%E4%BA%8EWKWebView-%E7%A7%92%E5%BC%80%E6%96%B9%E6%A1%88/"/>
     <id>http://yoursite.com/2020/08/22/%E5%85%B3%E4%BA%8EWKWebView-%E7%A7%92%E5%BC%80%E6%96%B9%E6%A1%88/</id>
     <published>2020-08-22T07:24:44.000Z</published>
-    <updated>2020-08-22T07:54:59.596Z</updated>
+    <updated>2020-08-22T07:58:20.032Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;blockquote&gt;
-&lt;p&gt;WKWebView
-        
-      
+      &lt;blockquote&gt;
+&lt;p&gt;WKWebView 秒开方案，不仅需要端上优化，也需要前后端配合，我们业务前期在UIWebView上已经通过各种优化达到了秒开，但是据说由于苹果今年12月份就不允许上架UIWebView，所以我们紧急切换到WKWebView，但由于WKWebView在启动初始化的时候表现还是不如人意，我们的目标是低端机型至少大部分页面也能秒开。经过一系列的优化操作，实现效果和数据都是非常可观的。&lt;/p&gt;
+&lt;/blockquote&gt;
     
     </summary>
     
