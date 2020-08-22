@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-08-22T12:49:27.405Z</updated>
+  <updated>2020-08-22T13:26:42.527Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,30 +17,31 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>iOS LLVM &amp;&amp; Clang 浅谈</title>
+    <title>iOS LLVM-Clang 浅谈</title>
     <link href="http://yoursite.com/2020/08/22/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/"/>
     <id>http://yoursite.com/2020/08/22/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/</id>
     <published>2020-08-22T12:41:29.000Z</published>
-    <updated>2020-08-22T12:49:27.405Z</updated>
+    <updated>2020-08-22T13:26:42.527Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;h5 id=&quot;LLVM概念&quot;&gt;&lt;a href=&quot;#LLVM概念&quot; class=&quot;headerlink&quot; title=&quot;LLVM概念&quot;&gt;&lt;/a&gt;LLVM概念&lt;/h5&gt;&lt;ol&gt;
-&lt;li&gt;LLVM官网: &lt;a
-        
-      
+      &lt;h5 id=&quot;LLVM概念&quot;&gt;&lt;a href=&quot;#LLVM概念&quot; class=&quot;headerlink&quot; title=&quot;LLVM概念&quot;&gt;&lt;/a&gt;LLVM概念&lt;/h5&gt;&lt;ol&gt;
+&lt;li&gt;LLVM官网: &lt;a href=&quot;https://llvm.org/&quot;&gt;https://llvm.org/&lt;/a&gt; &lt;/li&gt;
+&lt;li&gt;编译器架构图:&lt;br&gt;&lt;img src=&quot;/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-162208.png&quot;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Frontend:前端 → 词法分析、语法分析、语义分析、生成中间代码(LLVM IR) &lt;/li&gt;
+&lt;li&gt;Optimizer:优化器 → 中间代码优化&lt;/li&gt;
+&lt;li&gt;Backend:后端 → 生成机器码&lt;/li&gt;
+&lt;li&gt;传统编译器(如 CGG )的前端和后端没有完全分离，耦合在了一起，因而如果要支持一门新的语言或硬件平台，需要做大量的工作。
     
     </summary>
     
     
-      <category term="LLVM &amp;&amp; Clang" scheme="http://yoursite.com/categories/LLVM-Clang/"/>
+      <category term="LLVM-Clang" scheme="http://yoursite.com/categories/LLVM-Clang/"/>
     
     
-      <category term="LLVM &amp;&amp; Clang" scheme="http://yoursite.com/tags/LLVM-Clang/"/>
+      <category term="LLVM-Clang" scheme="http://yoursite.com/tags/LLVM-Clang/"/>
     
   </entry>
   
@@ -96,7 +97,7 @@
     <link href="http://yoursite.com/2020/07/30/hello-world/"/>
     <id>http://yoursite.com/2020/07/30/hello-world/</id>
     <published>2020-07-30T03:49:45.994Z</published>
-    <updated>2020-07-30T03:49:45.994Z</updated>
+    <updated>2020-07-30T03:49:45.000Z</updated>
     
     <summary type="html">
     
