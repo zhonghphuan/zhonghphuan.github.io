@@ -19,7 +19,7 @@
 ]]></content>
   </entry>
   <entry>
-    <title>iOS 自动化 - 打包</title>
+    <title>iOS 自动化杂谈</title>
     <url>/2020/08/19/iOS-%E8%87%AA%E5%8A%A8%E5%8C%96-%E6%89%93%E5%8C%85/</url>
     <content><![CDATA[<blockquote>
 <p>前言：可持续集成自动化的话题已经老生常谈了。目前市面上比较流行的自动化流程工具——Fastlane，Fastlane是用Ruby语言编写的一套自动化工具集和框架，Fastlane的工具集基本上涵盖了打包，签名，测试，部署，发布，库管理等等用起来比较方便，配合Jenkins可持续化集成，基本可以满足大部分的流程自动化。</p>
