@@ -92,27 +92,4 @@
     
   </entry>
   
-  <entry>
-    <title>Hello World</title>
-    <link href="http://yoursite.com/2020/07/30/hello-world/"/>
-    <id>http://yoursite.com/2020/07/30/hello-world/</id>
-    <published>2020-07-30T03:49:45.994Z</published>
-    <updated>2020-07-30T03:49:45.000Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt;
-        
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
-  
 </feed>
