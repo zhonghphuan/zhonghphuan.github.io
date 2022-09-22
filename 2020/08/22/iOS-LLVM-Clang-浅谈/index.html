@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.2.0">
+<meta name="generator" content="Hexo 5.4.2">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,14 +13,12 @@
 <link rel="stylesheet" href="/css/main.css">
 
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
-
-<script class="hexo-configurations">
+<script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="LLVM概念 LLVM官网: https:&#x2F;&#x2F;llvm.org&#x2F;  编译器架构图:   Frontend:前端 → 词法分析、语法分析、语义分析、生成中间代码(LLVM IR)  Optimizer:优化器 → 中间代码优化 Backend:后端 → 生成机器码 传统编译器(如 CGG )的前端和后端没有完全分离，耦合在了一起，因而如果要支持一门新的语言或硬件平台，需要做大量的工作。">
@@ -50,11 +48,10 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://yoursite.com/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-162208.png">
 
-
 <link rel="canonical" href="http://yoursite.com/2020/08/22/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/">
 
 
-<script data-pjax class="page-configurations">
+<script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
@@ -74,62 +71,50 @@
 
   <noscript>
   <style>
-  body { margin-top: 2rem; }
-
+  .use-motion .brand,
   .use-motion .menu-item,
-  .use-motion .sidebar,
+  .sidebar-inner,
   .use-motion .post-block,
   .use-motion .pagination,
   .use-motion .comments,
   .use-motion .post-header,
   .use-motion .post-body,
-  .use-motion .collection-header {
-    visibility: visible;
-  }
-
-  .use-motion .header,
-  .use-motion .site-brand-container .toggle,
-  .use-motion .footer { opacity: initial; }
+  .use-motion .collection-header { opacity: initial; }
 
   .use-motion .site-title,
-  .use-motion .site-subtitle,
-  .use-motion .custom-logo-image {
+  .use-motion .site-subtitle {
     opacity: initial;
     top: initial;
   }
 
-  .use-motion .logo-line {
-    transform: scaleX(1);
-  }
-
-  .search-pop-overlay, .sidebar-nav { display: none; }
-  .sidebar-panel { display: block; }
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
   </style>
 </noscript>
 
 <link rel="alternate" href="/atom.xml" title="钟环" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
 
-  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
+      <span class="logo-line-before"><i></i></span>
       <h1 class="site-title">钟环</h1>
-      <i class="logo-line"></i>
+      <span class="logo-line-after"><i></i></span>
     </a>
   </div>
 
@@ -142,8 +127,9 @@
 
 
 
+
 <nav class="site-nav">
-  <ul class="main-menu menu">
+  <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
     <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
@@ -180,7 +166,7 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" maxlength="80"
+    <input autocomplete="off" autocapitalize="off"
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
@@ -188,9 +174,9 @@
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div class="search-result-container no-result">
-  <div class="search-result-icon">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
   </div>
 </div>
 
@@ -198,98 +184,20 @@
   </div>
 
 </div>
-        
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#LLVM%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">LLVM概念</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Clang%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">Clang概念</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">编译流程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%A7%84%E5%88%99"><span class="nav-number">4.</span> <span class="nav-text">自定义规则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E8%87%AA%E5%AE%9A%E4%B9%89%E8%A7%84%E5%88%99Xcode%E9%A1%B9%E7%9B%AE"><span class="nav-number">5.</span> <span class="nav-text">加载自定义规则Xcode项目</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B9%E7%9B%AE%E7%94%9F%E6%88%90dylib%E6%96%87%E4%BB%B6"><span class="nav-number">6.</span> <span class="nav-text">编译自定义项目生成dylib文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E8%A7%84%E5%88%99"><span class="nav-number">7.</span> <span class="nav-text">调试规则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B"><span class="nav-number">8.</span> <span class="nav-text">查看编译过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B-preprocessor-%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">9.</span> <span class="nav-text">查看 preprocessor(预处理)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90%EF%BC%8C%E7%94%9F%E6%88%90Token"><span class="nav-number">10.</span> <span class="nav-text">词法分析，生成Token</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90%EF%BC%8C%E7%94%9F%E6%88%90%E6%8A%BD%E8%B1%A1AST%E8%AF%AD%E6%B3%95%E6%A0%91"><span class="nav-number">11.</span> <span class="nav-text">语法分析，生成抽象AST语法树</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%A7%84%E5%88%99%E6%BA%90%E7%A0%81"><span class="nav-number">12.</span> <span class="nav-text">自定义规则源码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B1%9E%E6%80%A7%E8%A7%84%E8%8C%83"><span class="nav-number">13.</span> <span class="nav-text">自定义属性规范</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%A9%BA%E6%A0%BC%E8%A7%84%E8%8C%83"><span class="nav-number">14.</span> <span class="nav-text">自定义空格规范</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%9E%9A%E4%B8%BE%E8%A7%84%E8%8C%83"><span class="nav-number">15.</span> <span class="nav-text">自定义枚举规范</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%90%8D%E8%A7%84%E8%8C%83"><span class="nav-number">16.</span> <span class="nav-text">自定义类名规范</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%96%B9%E6%B3%95%E6%A0%BC%E5%BC%8F%E8%A7%84%E8%8C%83"><span class="nav-number">17.</span> <span class="nav-text">自定义方法格式规范</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%AD%A3oclint%E8%AF%AF%E6%8A%A5%E8%A7%84%E8%8C%83"><span class="nav-number">18.</span> <span class="nav-text">修正oclint误报规范</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%A3%80%E6%B5%8B"><span class="nav-number">19.</span> <span class="nav-text">自定义内存泄漏检测</span></a></li></ol></div>
-      </section>
-      <!--/noindex-->
-
-      <section class="site-overview-wrap sidebar-panel">
-        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="钟环"
-      src="/images/avatar.png">
-  <p class="site-author-name" itemprop="name">钟环</p>
-  <div class="site-description" itemprop="description">个人博客,主要涉及移动端、前后端知识共享、前沿技术共同学习等方面</div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">4</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">4</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">4</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author animated">
-      <span class="links-of-author-item">
-        <a href="https://github.com/zhonghphuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhonghphuan" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:zhonghphuan@hotmail.com" title="E-Mail → mailto:zhonghphuan@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
-      </span>
-  </div>
-
-
-
-      </section>
-        <div class="back-to-top animated">
-          <i class="fa fa-arrow-up"></i>
-          <span>0%</span>
-        </div>
-    </div>
-  </aside>
-  <div class="sidebar-dimmer"></div>
-
-
     </header>
 
     
   <div class="reading-progress-bar"></div>
   <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
 
-    <div class="main-inner post posts-expand">
-      
-
-      
+          <div class="content post posts-expand">
+            
 
     
   
@@ -300,59 +208,52 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
       <meta itemprop="name" content="钟环">
-      <meta itemprop="description" content="个人博客,主要涉及移动端、前后端知识共享、前沿技术共同学习等方面">
+      <meta itemprop="description" content="个人博客,主要涉及移动端、音视频、前沿技术共同学习等方面">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="钟环">
     </span>
-
-    
-    
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           iOS LLVM-Clang 浅谈
         </h1>
 
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
 
-      <time title="创建时间：2020-08-22 20:41:29 / 修改时间：21:51:52" itemprop="dateCreated datePublished" datetime="2020-08-22T20:41:29+08:00">2020-08-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/LLVM-Clang/" itemprop="url" rel="index"><span itemprop="name">LLVM-Clang</span></a>
-        </span>
-    </span>
+              <time title="创建时间：2020-08-22 20:41:29 / 修改时间：21:51:52" itemprop="dateCreated datePublished" datetime="2020-08-22T20:41:29+08:00">2020-08-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LLVM-Clang/" itemprop="url" rel="index"><span itemprop="name">LLVM-Clang</span></a>
+                </span>
+            </span>
 
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>20k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>18 分钟</span>
-    </span>
-</div>
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>19k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>17 分钟</span>
+            </span>
 
         </div>
       </header>
@@ -361,6 +262,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
+
+      
         <h5 id="LLVM概念"><a href="#LLVM概念" class="headerlink" title="LLVM概念"></a>LLVM概念</h5><ol>
 <li>LLVM官网: <a target="_blank" rel="noopener" href="https://llvm.org/">https://llvm.org/</a> </li>
 <li>编译器架构图:<br><img src="/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-162208.png"></li>
@@ -369,7 +272,7 @@
 <li>Frontend:前端 → 词法分析、语法分析、语义分析、生成中间代码(LLVM IR) </li>
 <li>Optimizer:优化器 → 中间代码优化</li>
 <li>Backend:后端 → 生成机器码</li>
-<li>传统编译器(如 CGG )的前端和后端没有完全分离，耦合在了一起，因而如果要支持一门新的语言或硬件平台，需要做大量的工作。<a id="more"></a>
+<li>传统编译器(如 CGG )的前端和后端没有完全分离，耦合在了一起，因而如果要支持一门新的语言或硬件平台，需要做大量的工作。<span id="more"></span>
 <img src="/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-162609.png"></li>
 <li>不同的前端后端使用统一的中间代码LLVM Intermediate Representation (LLVM IR)<ul>
 <li><ol>
@@ -405,16 +308,19 @@
 <li>Clang项目为LLVM 项目的C语言系列(C，C ++，Objective C / C ++，OpenCL，CUDA和RenderScript)中的语言提供语言前端和工具基础结构。提供了与GCC兼容的编译器驱动程序(clang)和与MSVC兼容的编译器驱动程序(clang-cl.exe) </li>
 <li>说白了就是LLVM项目的一个子项目，LLVM的C语言家族前端。 </li>
 <li>相比于GCC，Clang具有如下优点<ul>
-<li>编译速度快:在某些平台上，Clang的编译速度显著的快过GCC(Debug模式下编译OC速度比GGC快3倍) </li>
-<li>占用内存小:Clang生成的AST所占用的内存是GCC的五分之一左右 </li>
-<li>模块化设计:Clang采用基于库的模块化设计，易于IDE 集成及其他用途的重用 </li>
-<li>诊断信息可读性强:在编译过程中，Clang 创建并保留了大量详细的元数据(metadata)，有利于调试和错误报告 </li>
-<li>设计清晰简单，容易理解，易于扩展增强</li>
+<li><p>编译速度快:在某些平台上，Clang的编译速度显著的快过GCC(Debug模式下编译OC速度比GGC快3倍) </p>
+</li>
+<li><p>占用内存小:Clang生成的AST所占用的内存是GCC的五分之一左右 </p>
+</li>
+<li><p>模块化设计:Clang采用基于库的模块化设计，易于IDE 集成及其他用途的重用 </p>
+</li>
+<li><p>诊断信息可读性强:在编译过程中，Clang 创建并保留了大量详细的元数据(metadata)，有利于调试和错误报告 </p>
+</li>
+<li><p>设计清晰简单，容易理解，易于扩展增强</p>
+<h5 id="编译流程"><a href="#编译流程" class="headerlink" title="编译流程"></a>编译流程</h5><p><img src="/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-163910.png"></p>
+</li>
 </ul>
 </li>
-</ol>
-<h5 id="编译流程"><a href="#编译流程" class="headerlink" title="编译流程"></a>编译流程</h5><p><img src="/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-163910.png"></p>
-<ol>
 <li>Objective-C与swift都采用Clang作为编译器前端，编译器前端主要进行词法分析、语法分析、语义分析、生成中间代码，在这个过程中，会进行类型 检查，如果发现错误或者警告会标注出来在哪一行。</li>
 <li>编译器后端会进行机器无关的代码优化，生成机器语言，并且进行机器相关的代码优化，根据不同的系统架构生成不同的机器码。<br><img src="/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-164702.png"></li>
 </ol>
@@ -426,13 +332,13 @@
 
 <h5 id="编译自定义项目生成dylib文件"><a href="#编译自定义项目生成dylib文件" class="headerlink" title="编译自定义项目生成dylib文件"></a>编译自定义项目生成dylib文件</h5><p>复制到~/oclint/build/oclint-release/lib/oclint/rules下</p>
 <h5 id="调试规则"><a href="#调试规则" class="headerlink" title="调试规则"></a>调试规则</h5><p><img src="/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-165241.png"><br>以下编译环境是在测试demo中的，添加到scheme下的run配置中:<br><img src="/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-165317.png"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-R&#x3D;&#x2F;Users&#x2F;libing&#x2F;oclint&#x2F;oclint-xcoderules&#x2F;rules.dl&#x2F;Debug &#x2F;Users&#x2F;libing&#x2F;oclint&#x2F;oclint-xcodebuild&#x2F;TestRule&#x2F;TestRule&#x2F;ViewController.m -- -x objective-c -isystem ~&#x2F;oclint&#x2F;build&#x2F;oclint-release&#x2F;lib&#x2F;clang&#x2F;5.0.1&#x2F;include&#x2F; -arch x86_64 -fmessage-length&#x3D;0 -fdiagnostics-show-note-include- stack -fmacro-backtrace-limit&#x3D;0 -std&#x3D;gnu11 -fobjc-arc -fobjc-weak -fmodules -gmodules -fmodules-cache-path&#x3D;&#x2F;Users&#x2F;libing&#x2F;Library&#x2F;Developer&#x2F;Xcode &#x2F;DerivedData&#x2F;ModuleCache.noindex -fmodules-prune-interval&#x3D;86400 -fmodules-prune-after&#x3D;345600 -fbuild-session-file&#x3D;&#x2F;Users&#x2F;libing&#x2F;Library&#x2F;Developer&#x2F;Xcode &#x2F;DerivedData&#x2F;ModuleCache.noindex&#x2F;Session.modulevalidation -fmodules-validate-once-per-build-session -Wnon-modular-include-in-framework-module - Werror&#x3D;non-modular-include-in-framework-module -Wno-trigraphs -fpascal-strings -O0 -fno-common -Wno-missing-field-initializers -Wno-missing-prototypes - Werror&#x3D;return-type -Wdocumentation -Wunreachable-code -Wno-implicit-atomic-properties -Werror&#x3D;deprecated-objc-isa-usage -Wno-objc-interface-ivars - Werror&#x3D;objc-root-class -Wno-arc-repeated-use-of-weak -Wimplicit-retain-self -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch - Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wconditional-uninitialized - Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum- conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno- selector -Wno-strict-selector-match -Wundeclared-selector -Wdeprecated-implementations -DDEBUG&#x3D;1 -DOBJC_OLD_DISPATCH_PROTOTYPES&#x3D;0 -isysroot &#x2F;Applications&#x2F;Xcode.app&#x2F;Contents&#x2F;Developer&#x2F;Platforms&#x2F;iPhoneSimulator.platform&#x2F;Developer&#x2F;SDKs&#x2F;iPhoneSimulator12.2.sdk -fasm-blocks -fstrict-aliasing - Wprotocol -Wdeprecated-declarations -mios-simulator-version-min&#x3D;12.2 -g -Wno-sign-conversion -Winfinite-recursion -Wcomma -Wblock-capture- autoreleasing -Wstrict-prototypes -Wno-semicolon-before-method-body -Wunguarded-availability -fobjc-abi-version&#x3D;2 -fobjc-legacy-dispatch -index-store- path &#x2F;Users&#x2F;libing&#x2F;Library&#x2F;Developer&#x2F;Xcode&#x2F;DerivedData&#x2F;TestRule-fnyamuwmajnavbcsgeuhbzloxpbs&#x2F;Index&#x2F;DataStore -iquote &#x2F;Users&#x2F;libing&#x2F;Library&#x2F;Developer &#x2F;Xcode&#x2F;DerivedData&#x2F;TestRule-fnyamuwmajnavbcsgeuhbzloxpbs&#x2F;Build&#x2F;Intermediates.noindex&#x2F;TestRule.build&#x2F;Debug-iphonesimulator&#x2F;TestRule.build&#x2F;TestRule- generated-files.hmap -I&#x2F;Users&#x2F;libing&#x2F;Library&#x2F;Developer&#x2F;Xcode&#x2F;DerivedData&#x2F;TestRule-fnyamuwmajnavbcsgeuhbzloxpbs&#x2F;Build&#x2F;Intermediates.noindex&#x2F;TestRule.build &#x2F;Debug-iphonesimulator&#x2F;TestRule.build&#x2F;TestRule-own-target-headers.hmap -I&#x2F;Users&#x2F;libing&#x2F;Library&#x2F;Developer&#x2F;Xcode&#x2F;DerivedData&#x2F;TestRule- fnyamuwmajnavbcsgeuhbzloxpbs&#x2F;Build&#x2F;Intermediates.noindex&#x2F;TestRule.build&#x2F;Debug-iphonesimulator&#x2F;TestRule.build&#x2F;TestRule-all-target-headers.hmap -iquote &#x2F;Users&#x2F;libing&#x2F;Library&#x2F;Developer&#x2F;Xcode&#x2F;DerivedData&#x2F;TestRule-fnyamuwmajnavbcsgeuhbzloxpbs&#x2F;Build&#x2F;Intermediates.noindex&#x2F;TestRule.build&#x2F;Debug-iphonesimulator &#x2F;TestRule.build&#x2F;TestRule-project-headers.hmap -I&#x2F;Users&#x2F;libing&#x2F;Library&#x2F;Developer&#x2F;Xcode&#x2F;DerivedData&#x2F;TestRule-fnyamuwmajnavbcsgeuhbzloxpbs&#x2F;Build&#x2F;Products &#x2F;Debug-iphonesimulator&#x2F;include -I&#x2F;Users&#x2F;libing&#x2F;Library&#x2F;Developer&#x2F;Xcode&#x2F;DerivedData&#x2F;TestRule-fnyamuwmajnavbcsgeuhbzloxpbs&#x2F;Build&#x2F;Intermediates.noindex &#x2F;TestRule.build&#x2F;Debug-iphonesimulator&#x2F;TestRule.build&#x2F;DerivedSources-normal&#x2F;x86_64 -I&#x2F;Users&#x2F;libing&#x2F;Library&#x2F;Developer&#x2F;Xcode&#x2F;DerivedData&#x2F;TestRule- fnyamuwmajnavbcsgeuhbzloxpbs&#x2F;Build&#x2F;Intermediates.noindex&#x2F;TestRule.build&#x2F;Debug-iphonesimulator&#x2F;TestRule.build&#x2F;DerivedSources&#x2F;x86_64 -I&#x2F;Users&#x2F;libing&#x2F;Library &#x2F;Developer&#x2F;Xcode&#x2F;DerivedData&#x2F;TestRule-fnyamuwmajnavbcsgeuhbzloxpbs&#x2F;Build&#x2F;Intermediates.noindex&#x2F;TestRule.build&#x2F;Debug-iphonesimulator&#x2F;TestRule.build &#x2F;DerivedSources -F&#x2F;Users&#x2F;libing&#x2F;Library&#x2F;Developer&#x2F;Xcode&#x2F;DerivedData&#x2F;TestRule-fnyamuwmajnavbcsgeuhbzloxpbs&#x2F;Build&#x2F;Products&#x2F;Debug-iphonesimulator -MMD - MT dependencies -MF &#x2F;Users&#x2F;libing&#x2F;Library&#x2F;Developer&#x2F;Xcode&#x2F;DerivedData&#x2F;TestRule-fnyamuwmajnavbcsgeuhbzloxpbs&#x2F;Build&#x2F;Intermediates.noindex&#x2F;TestRule.build &#x2F;Debug-iphonesimulator&#x2F;TestRule.build&#x2F;Objects-normal&#x2F;x86_64&#x2F;ViewController.d --serialize-diagnostics &#x2F;Users&#x2F;libing&#x2F;Library&#x2F;Developer&#x2F;Xcode&#x2F;DerivedData &#x2F;TestRule-fnyamuwmajnavbcsgeuhbzloxpbs&#x2F;Build&#x2F;Intermediates.noindex&#x2F;TestRule.build&#x2F;Debug-iphonesimulator&#x2F;TestRule.build&#x2F;Objects-normal&#x2F;x86_64 &#x2F;ViewController.dia -c &#x2F;Users&#x2F;libing&#x2F;oclint&#x2F;oclint-xcodebuild&#x2F;TestRule&#x2F;TestRule&#x2F;ViewController.m -o &#x2F;Users&#x2F;libing&#x2F;Library&#x2F;Developer&#x2F;Xcode&#x2F;DerivedData&#x2F;TestRule- fnyamuwmajnavbcsgeuhbzloxpbs&#x2F;Build&#x2F;Intermediates.noindex&#x2F;TestRule.build&#x2F;Debug-iphonesimulator&#x2F;TestRule.build&#x2F;Objects-normal&#x2F;x86_64&#x2F;ViewController.o</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-R=/Users/libing/oclint/oclint-xcoderules/rules.dl/Debug /Users/libing/oclint/oclint-xcodebuild/TestRule/TestRule/ViewController.m -- -x objective-c -isystem ~/oclint/build/oclint-release/lib/clang/5.0.1/include/ -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include- stack -fmacro-backtrace-limit=0 -std=gnu11 -fobjc-arc -fobjc-weak -fmodules -gmodules -fmodules-cache-path=/Users/libing/Library/Developer/Xcode /DerivedData/ModuleCache.noindex -fmodules-prune-interval=86400 -fmodules-prune-after=345600 -fbuild-session-file=/Users/libing/Library/Developer/Xcode /DerivedData/ModuleCache.noindex/Session.modulevalidation -fmodules-validate-once-per-build-session -Wnon-modular-include-in-framework-module - Werror=non-modular-include-in-framework-module -Wno-trigraphs -fpascal-strings -O0 -fno-common -Wno-missing-field-initializers -Wno-missing-prototypes - Werror=return-type -Wdocumentation -Wunreachable-code -Wno-implicit-atomic-properties -Werror=deprecated-objc-isa-usage -Wno-objc-interface-ivars - Werror=objc-root-class -Wno-arc-repeated-use-of-weak -Wimplicit-retain-self -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch - Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wconditional-uninitialized - Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum- conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno- selector -Wno-strict-selector-match -Wundeclared-selector -Wdeprecated-implementations -DDEBUG=1 -DOBJC_OLD_DISPATCH_PROTOTYPES=0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator12.2.sdk -fasm-blocks -fstrict-aliasing - Wprotocol -Wdeprecated-declarations -mios-simulator-version-min=12.2 -g -Wno-sign-conversion -Winfinite-recursion -Wcomma -Wblock-capture- autoreleasing -Wstrict-prototypes -Wno-semicolon-before-method-body -Wunguarded-availability -fobjc-abi-version=2 -fobjc-legacy-dispatch -index-store- path /Users/libing/Library/Developer/Xcode/DerivedData/TestRule-fnyamuwmajnavbcsgeuhbzloxpbs/Index/DataStore -iquote /Users/libing/Library/Developer /Xcode/DerivedData/TestRule-fnyamuwmajnavbcsgeuhbzloxpbs/Build/Intermediates.noindex/TestRule.build/Debug-iphonesimulator/TestRule.build/TestRule- generated-files.hmap -I/Users/libing/Library/Developer/Xcode/DerivedData/TestRule-fnyamuwmajnavbcsgeuhbzloxpbs/Build/Intermediates.noindex/TestRule.build /Debug-iphonesimulator/TestRule.build/TestRule-own-target-headers.hmap -I/Users/libing/Library/Developer/Xcode/DerivedData/TestRule- fnyamuwmajnavbcsgeuhbzloxpbs/Build/Intermediates.noindex/TestRule.build/Debug-iphonesimulator/TestRule.build/TestRule-all-target-headers.hmap -iquote /Users/libing/Library/Developer/Xcode/DerivedData/TestRule-fnyamuwmajnavbcsgeuhbzloxpbs/Build/Intermediates.noindex/TestRule.build/Debug-iphonesimulator /TestRule.build/TestRule-project-headers.hmap -I/Users/libing/Library/Developer/Xcode/DerivedData/TestRule-fnyamuwmajnavbcsgeuhbzloxpbs/Build/Products /Debug-iphonesimulator/include -I/Users/libing/Library/Developer/Xcode/DerivedData/TestRule-fnyamuwmajnavbcsgeuhbzloxpbs/Build/Intermediates.noindex /TestRule.build/Debug-iphonesimulator/TestRule.build/DerivedSources-normal/x86_64 -I/Users/libing/Library/Developer/Xcode/DerivedData/TestRule- fnyamuwmajnavbcsgeuhbzloxpbs/Build/Intermediates.noindex/TestRule.build/Debug-iphonesimulator/TestRule.build/DerivedSources/x86_64 -I/Users/libing/Library /Developer/Xcode/DerivedData/TestRule-fnyamuwmajnavbcsgeuhbzloxpbs/Build/Intermediates.noindex/TestRule.build/Debug-iphonesimulator/TestRule.build /DerivedSources -F/Users/libing/Library/Developer/Xcode/DerivedData/TestRule-fnyamuwmajnavbcsgeuhbzloxpbs/Build/Products/Debug-iphonesimulator -MMD - MT dependencies -MF /Users/libing/Library/Developer/Xcode/DerivedData/TestRule-fnyamuwmajnavbcsgeuhbzloxpbs/Build/Intermediates.noindex/TestRule.build /Debug-iphonesimulator/TestRule.build/Objects-normal/x86_64/ViewController.d --serialize-diagnostics /Users/libing/Library/Developer/Xcode/DerivedData /TestRule-fnyamuwmajnavbcsgeuhbzloxpbs/Build/Intermediates.noindex/TestRule.build/Debug-iphonesimulator/TestRule.build/Objects-normal/x86_64 /ViewController.dia -c /Users/libing/oclint/oclint-xcodebuild/TestRule/TestRule/ViewController.m -o /Users/libing/Library/Developer/Xcode/DerivedData/TestRule- fnyamuwmajnavbcsgeuhbzloxpbs/Build/Intermediates.noindex/TestRule.build/Debug-iphonesimulator/TestRule.build/Objects-normal/x86_64/ViewController.o</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>备注:-R=/Users/libing/oclint/oclint-xcoderules/rules.dl/Debug /Users/libing/oclint/oclint-xcodebuild/TestRule/TestRule/ViewController.m – -x objective-c - isystem ~/oclint/build/oclint-release/lib/clang/5.0.1/include/ 加上图上从-arch x86_64 开始复制到最后，拼起来放到自定义规则的scheme的run配置中。</p>
 </blockquote>
 <p><img src="/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-165415.png"></p>
 <h5 id="查看编译过程"><a href="#查看编译过程" class="headerlink" title="查看编译过程"></a>查看编译过程</h5><p><code>clang -ccc-print-phases ViewController.m</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0: input, &quot;ViewController.m&quot;, objective-c</span><br><span class="line">1: preprocessor, &#123;0&#125;, objective-c-cpp-output → 预编译</span><br><span class="line">2: compiler, &#123;1&#125;, ir → 前端编译，生成中间代码IR</span><br><span class="line">3: backend, &#123;2&#125;, assembler → 后端Backend 4: assembler, &#123;3&#125;, object → 生成目标.o文件 5: linker, &#123;4&#125;, image → 链接</span><br><span class="line">6: bind-arch, &quot;x86_64&quot;, &#123;5&#125;, image → 绑定架构</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0: input, &quot;ViewController.m&quot;, objective-c</span><br><span class="line">1: preprocessor, &#123;0&#125;, objective-c-cpp-output → 预编译</span><br><span class="line">2: compiler, &#123;1&#125;, ir → 前端编译，生成中间代码IR</span><br><span class="line">3: backend, &#123;2&#125;, assembler → 后端Backend 4: assembler, &#123;3&#125;, object → 生成目标.o文件 5: linker, &#123;4&#125;, image → 链接</span><br><span class="line">6: bind-arch, &quot;x86_64&quot;, &#123;5&#125;, image → 绑定架构</span><br></pre></td></tr></table></figure>
 <h5 id="查看-preprocessor-预处理"><a href="#查看-preprocessor-预处理" class="headerlink" title="查看 preprocessor(预处理)"></a>查看 preprocessor(预处理)</h5><p><code>clang -E ViewController.m</code><br><img src="/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-165559.png"></p>
 <blockquote>
 <p>注意:出现fatal error: ‘UIKit/UIKit.h’ file not found，但不影响查看结果，如果不报错指定一下sdk<br>clang -E -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk ViewController.m</p>
@@ -442,31 +348,31 @@
 <blockquote>
 <p>通过语法分析可以清晰的看到语法树中的节点，对应的节点Decl(声明) / Stmt(语句、表达式)，通过Google 搜索:clang XXX 可以直接定位到clang的该节 点文档说明。</p>
 </blockquote>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 分析所有声明</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitDecl</span><span class="params">(Decl *decl)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;<span class="comment">// 返回true以继续遍历AST，返回false以终止遍历，退出Clang </span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 分析表达式</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitStmt</span><span class="params">(Stmt *S)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;<span class="comment">// 返回true以继续遍历AST，返回false以终止遍历，退出Clang </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 分析所有声明</span></span><br><span class="line"><span class="type">bool</span> <span class="title function_">VisitDecl</span><span class="params">(Decl *decl)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;<span class="comment">// 返回true以继续遍历AST，返回false以终止遍历，退出Clang </span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 分析表达式</span></span><br><span class="line"><span class="type">bool</span> <span class="title function_">VisitStmt</span><span class="params">(Stmt *S)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;<span class="comment">// 返回true以继续遍历AST，返回false以终止遍历，退出Clang </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h5 id="自定义规则源码"><a href="#自定义规则源码" class="headerlink" title="自定义规则源码"></a>自定义规则源码</h5><p><a target="_blank" rel="noopener" href="https://github.com/zhonghphuan/OClintScripts">OClintScripts</a></p>
 <h5 id="自定义属性规范"><a href="#自定义属性规范" class="headerlink" title="自定义属性规范"></a>自定义属性规范</h5><ol>
-<li>nonatomic 与 atomic 修饰:遗忘或错用了 atomic 修饰<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitObjCPropertyDecl</span><span class="params">(ObjCPropertyDecl *node)</span> </span>&#123; </span><br><span class="line">  <span class="keyword">if</span> (node-&gt;isAtomic()) &#123;</span><br><span class="line">    <span class="built_in">string</span> description = <span class="string">&quot;不应该用atomic修饰 &quot;</span> + node-&gt;getNameAsString() + <span class="string">&quot; 请改用nonatomic&quot;</span>;</span><br><span class="line">    addViolation(node, <span class="keyword">this</span>, description);<span class="comment">//发出警告</span></span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-代码解析: 通过AST抽象语法树分析:<br><img src="/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-174140.png"><br>入口在VisitObjCPropertyDecl方法，那么在此方法中断点验证确实如此，接下来分析，属性中是否是atomic修饰，凭着灵感发现确实自动补全了isAtomic 方法，也可以这么写:<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ObjCPropertyDecl::PropertyAttributeKind attributeKind = node-&gt;getPropertyAttributes(); </span><br><span class="line">    <span class="keyword">if</span>(!(attributeKind &amp; ObjCPropertyDecl::OBJC_PR_nonatomic))&#123;</span><br><span class="line">    <span class="built_in">string</span> description = <span class="string">&quot;不应该用atomic修饰 &quot;</span> + node-&gt;getNameAsString() + <span class="string">&quot; 请改用nonatomic&quot;</span>;</span><br><span class="line">    addViolation(node, <span class="keyword">this</span>, description); <span class="comment">//发出警告</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>NSString 应尽量用 copy 修饰，避免用 strong 修饰<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(starts_with(typeStr, <span class="string">&quot;NSString&quot;</span>) &amp;&amp; !(attributeKind &amp; ObjCPropertyDecl::OBJC_PR_copy)) &#123;</span><br><span class="line">    addViolation(node, <span class="keyword">this</span>, typeStr + node-&gt;getNameAsString() + <span class="string">&quot; 应尽量用 copy 修饰&quot;</span>); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>Delegate 应该用 weak 修饰<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(typeStr.find(<span class="string">&quot;&lt;&quot;</span>)!=<span class="built_in">string</span>::npos &amp;&amp; typeStr.find(<span class="string">&quot;&gt;&quot;</span>)!=<span class="built_in">string</span>::npos &amp;&amp; starts_with(node-&gt;getType().getAsString(), <span class="string">&quot;id&quot;</span>))&#123; <span class="keyword">if</span>(!(attributeKind &amp; ObjCPropertyDecl::OBJC_PR_weak))&#123;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt; node-&gt;getType().getAsString()&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    addViolation(node, <span class="keyword">this</span>, node-&gt;getNameAsString() + <span class="string">&quot; 尽可能用 weak 修饰&quot;</span>); &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>Block 应该用 copy / strong 修饰<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (node-&gt;getType()-&gt;isBlockPointerType()) &#123;</span><br><span class="line">    <span class="keyword">if</span>(!((attributeKind &amp; ObjCPropertyDecl::OBJC_PR_copy) || (attributeKind &amp; ObjCPropertyDecl::OBJC_PR_strong)))&#123; </span><br><span class="line">    addViolation(node, <span class="keyword">this</span>, node-&gt;getNameAsString() + <span class="string">&quot; 应该用 copy / strong 修饰&quot;</span>);</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>属性名称应该遵循驼峰命名，不应该以大写或_开头<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">string</span> name = node-&gt;getNameAsString(); </span><br><span class="line"><span class="built_in">string</span>::iterator itor = name.begin(); </span><br><span class="line"><span class="keyword">if</span>(*itor &gt;= <span class="string">&#x27;A&#x27;</span> &amp;&amp; *itor &lt;= <span class="string">&#x27;Z&#x27;</span>)&#123;</span><br><span class="line">    addViolation(node, <span class="keyword">this</span>, <span class="string">&quot;Property &quot;</span>+name+<span class="string">&quot; 应该遵循驼峰命名，不应该以大写字母开头&quot;</span>); &#125;</span><br><span class="line"><span class="keyword">if</span>(*itor == <span class="string">&#x27;_&#x27;</span>)&#123;</span><br><span class="line">    addViolation(node, <span class="keyword">this</span>, <span class="string">&quot;Property &quot;</span>+name+<span class="string">&quot; 应该遵循驼峰命名，不应该以下划线开头&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>成员变量应该以_开头<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitObjCIvarDecl</span><span class="params">(ObjCIvarDecl *node)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">string</span> name = node-&gt;getNameAsString(); </span><br><span class="line">    <span class="built_in">string</span>::iterator itor = name.begin(); </span><br><span class="line">    <span class="keyword">if</span>(*itor != <span class="string">&#x27;_&#x27;</span>)&#123;</span><br><span class="line">        addViolation(node, <span class="keyword">this</span>, <span class="string">&quot;成员变量 &quot;</span>+name+<span class="string">&quot; 应该以下划线开头&quot;</span>); </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<li>nonatomic 与 atomic 修饰:遗忘或错用了 atomic 修饰<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> <span class="title function_">VisitObjCPropertyDecl</span><span class="params">(ObjCPropertyDecl *node)</span> &#123; </span><br><span class="line">  <span class="keyword">if</span> (node-&gt;isAtomic()) &#123;</span><br><span class="line">    <span class="built_in">string</span> description = <span class="string">&quot;不应该用atomic修饰 &quot;</span> + node-&gt;getNameAsString() + <span class="string">&quot; 请改用nonatomic&quot;</span>;</span><br><span class="line">    addViolation(node, this, description);<span class="comment">//发出警告</span></span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+代码解析: 通过AST抽象语法树分析:<br><img src="/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-174140.png"><br>入口在VisitObjCPropertyDecl方法，那么在此方法中断点验证确实如此，接下来分析，属性中是否是atomic修饰，凭着灵感发现确实自动补全了isAtomic 方法，也可以这么写:<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ObjCPropertyDecl::PropertyAttributeKind attributeKind = node-&gt;getPropertyAttributes(); </span><br><span class="line">    <span class="keyword">if</span>(!(attributeKind &amp; ObjCPropertyDecl::OBJC_PR_nonatomic))&#123;</span><br><span class="line">    <span class="built_in">string</span> description = <span class="string">&quot;不应该用atomic修饰 &quot;</span> + node-&gt;getNameAsString() + <span class="string">&quot; 请改用nonatomic&quot;</span>;</span><br><span class="line">    addViolation(node, this, description); <span class="comment">//发出警告</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>NSString 应尽量用 copy 修饰，避免用 strong 修饰<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(starts_with(typeStr, <span class="string">&quot;NSString&quot;</span>) &amp;&amp; !(attributeKind &amp; ObjCPropertyDecl::OBJC_PR_copy)) &#123;</span><br><span class="line">    addViolation(node, this, typeStr + node-&gt;getNameAsString() + <span class="string">&quot; 应尽量用 copy 修饰&quot;</span>); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>Delegate 应该用 weak 修饰<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(typeStr.find(<span class="string">&quot;&lt;&quot;</span>)!=<span class="built_in">string</span>::npos &amp;&amp; typeStr.find(<span class="string">&quot;&gt;&quot;</span>)!=<span class="built_in">string</span>::npos &amp;&amp; starts_with(node-&gt;getType().getAsString(), <span class="string">&quot;id&quot;</span>))&#123; <span class="keyword">if</span>(!(attributeKind &amp; ObjCPropertyDecl::OBJC_PR_weak))&#123;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt; node-&gt;getType().getAsString()&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    addViolation(node, this, node-&gt;getNameAsString() + <span class="string">&quot; 尽可能用 weak 修饰&quot;</span>); &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>Block 应该用 copy / strong 修饰<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (node-&gt;getType()-&gt;isBlockPointerType()) &#123;</span><br><span class="line">    <span class="keyword">if</span>(!((attributeKind &amp; ObjCPropertyDecl::OBJC_PR_copy) || (attributeKind &amp; ObjCPropertyDecl::OBJC_PR_strong)))&#123; </span><br><span class="line">    addViolation(node, this, node-&gt;getNameAsString() + <span class="string">&quot; 应该用 copy / strong 修饰&quot;</span>);</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>属性名称应该遵循驼峰命名，不应该以大写或_开头<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">string</span> name = node-&gt;getNameAsString(); </span><br><span class="line"><span class="built_in">string</span>::iterator itor = name.begin(); </span><br><span class="line"><span class="keyword">if</span>(*itor &gt;= <span class="string">&#x27;A&#x27;</span> &amp;&amp; *itor &lt;= <span class="string">&#x27;Z&#x27;</span>)&#123;</span><br><span class="line">    addViolation(node, this, <span class="string">&quot;Property &quot;</span>+name+<span class="string">&quot; 应该遵循驼峰命名，不应该以大写字母开头&quot;</span>); &#125;</span><br><span class="line"><span class="keyword">if</span>(*itor == <span class="string">&#x27;_&#x27;</span>)&#123;</span><br><span class="line">    addViolation(node, this, <span class="string">&quot;Property &quot;</span>+name+<span class="string">&quot; 应该遵循驼峰命名，不应该以下划线开头&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>成员变量应该以_开头<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> <span class="title function_">VisitObjCIvarDecl</span><span class="params">(ObjCIvarDecl *node)</span> &#123;</span><br><span class="line">    <span class="built_in">string</span> name = node-&gt;getNameAsString(); </span><br><span class="line">    <span class="built_in">string</span>::iterator itor = name.begin(); </span><br><span class="line">    <span class="keyword">if</span>(*itor != <span class="string">&#x27;_&#x27;</span>)&#123;</span><br><span class="line">        addViolation(node, this, <span class="string">&quot;成员变量 &quot;</span>+name+<span class="string">&quot; 应该以下划线开头&quot;</span>); </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h5 id="自定义空格规范"><a href="#自定义空格规范" class="headerlink" title="自定义空格规范"></a>自定义空格规范</h5></li>
-<li>方法前面-或+请遵循空格规范、方法大括号请遵循空格规范<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">VisitObjCMethodDecl</span><span class="params">(ObjCMethodDecl *node)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">string</span> methodDeclStr;</span><br><span class="line">        ASTContext *context = _carrier-&gt;getASTContext();</span><br><span class="line">        SourceLocation begin = node-&gt;getSourceRange().getBegin();</span><br><span class="line">        SourceLocation end = node-&gt;getSourceRange().getEnd(); methodDeclStr.assign(context-&gt;getSourceManager().getCharacterData(begin),end.getRawEncoding()-begin.getRawEncoding());</span><br><span class="line">        <span class="keyword">for</span>(<span class="built_in">string</span>::iterator it = methodDeclStr.begin(); it!= methodDeclStr.end(); it++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (*it ==<span class="string">&#x27;-&#x27;</span> || *it ==<span class="string">&#x27;+&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it+<span class="number">2</span> &lt; methodDeclStr.end()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (!((*(it+<span class="number">1</span>) == <span class="string">&#x27; &#x27;</span>)&amp;&amp;(*(it+<span class="number">2</span>) == <span class="string">&#x27;(&#x27;</span>))) &#123;</span><br><span class="line">                        addViolation(node, <span class="keyword">this</span>, <span class="string">&quot;方法前面-或+请遵循空格规范&quot;</span>);</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (*it ==<span class="string">&#x27;&#123;&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it<span class="number">-1</span> &gt;= methodDeclStr.begin()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (*(it<span class="number">-1</span>) != <span class="string">&#x27; &#x27;</span> &amp;&amp; *(it<span class="number">-1</span>) != <span class="string">&#x27;\n&#x27;</span>) &#123;</span><br><span class="line">                        addViolation(node, <span class="keyword">this</span>, <span class="string">&quot;方法大括号请遵循空格规范&quot;</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
-<li>@property左括号、右括号、中间逗号、*修饰需要遵循空格规范<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitObjCPropertyDecl</span><span class="params">(ObjCPropertyDecl *node)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">string</span> methodDeclStr;</span><br><span class="line">        ASTContext *context = _carrier-&gt;getASTContext();</span><br><span class="line">        SourceLocation begin = node-&gt;getSourceRange().getBegin();</span><br><span class="line">        SourceLocation end = node-&gt;getSourceRange().getEnd(); methodDeclStr.assign(context-&gt;getSourceManager().getCharacterData(begin),end.getRawEncoding()-begin.getRawEncoding());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="built_in">string</span>::iterator it = methodDeclStr.begin(); it!= methodDeclStr.end(); it++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (*it == <span class="string">&#x27;(&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it<span class="number">-2</span> &gt;= methodDeclStr.begin()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (!(*(it<span class="number">-1</span>) == <span class="string">&#x27; &#x27;</span> &amp;&amp; *(it<span class="number">-2</span>) == <span class="string">&#x27;y&#x27;</span>) &amp;&amp; *(it+<span class="number">1</span>) != <span class="string">&#x27;^&#x27;</span>) &#123;</span><br><span class="line">                        addViolation(node, <span class="keyword">this</span>, node-&gt;getNameAsString() + <span class="string">&quot;@property左括号请遵循空格规范&quot;</span>);</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (*it == <span class="string">&#x27;,&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it+<span class="number">1</span> &lt; methodDeclStr.end()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (*(it+<span class="number">1</span>) != <span class="string">&#x27; &#x27;</span>) &#123;</span><br><span class="line">                        addViolation(node, <span class="keyword">this</span>, node-&gt;getNameAsString() + <span class="string">&quot;@property中逗号请遵循空格规范&quot;</span>);</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (*it == <span class="string">&#x27;)&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it+<span class="number">1</span> &lt; methodDeclStr.end()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (*(it+<span class="number">1</span>) != <span class="string">&#x27; &#x27;</span>) &#123;</span><br><span class="line">                        addViolation(node, <span class="keyword">this</span>, node-&gt;getNameAsString() + <span class="string">&quot;@property右括号请遵循空格规范&quot;</span>);</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (*it == <span class="string">&#x27;*&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it<span class="number">-1</span> &gt;= methodDeclStr.begin()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (*(it<span class="number">-1</span>) != <span class="string">&#x27; &#x27;</span>) &#123;</span><br><span class="line">                        addViolation(node, <span class="keyword">this</span>, node-&gt;getNameAsString() + <span class="string">&quot;@property属性*修饰请遵循空格规范&quot;</span>);</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<li>方法前面-或+请遵循空格规范、方法大括号请遵循空格规范<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">    <span class="type">bool</span> <span class="title function_">VisitObjCMethodDecl</span><span class="params">(ObjCMethodDecl *node)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">string</span> methodDeclStr;</span><br><span class="line">        ASTContext *context = _carrier-&gt;getASTContext();</span><br><span class="line">        SourceLocation begin = node-&gt;getSourceRange().getBegin();</span><br><span class="line">        SourceLocation end = node-&gt;getSourceRange().getEnd(); methodDeclStr.assign(context-&gt;getSourceManager().getCharacterData(begin),end.getRawEncoding()-begin.getRawEncoding());</span><br><span class="line">        <span class="keyword">for</span>(<span class="built_in">string</span>::iterator it = methodDeclStr.begin(); it!= methodDeclStr.end(); it++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (*it ==<span class="string">&#x27;-&#x27;</span> || *it ==<span class="string">&#x27;+&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it+<span class="number">2</span> &lt; methodDeclStr.end()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (!((*(it+<span class="number">1</span>) == <span class="string">&#x27; &#x27;</span>)&amp;&amp;(*(it+<span class="number">2</span>) == <span class="string">&#x27;(&#x27;</span>))) &#123;</span><br><span class="line">                        addViolation(node, this, <span class="string">&quot;方法前面-或+请遵循空格规范&quot;</span>);</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (*it ==<span class="string">&#x27;&#123;&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it<span class="number">-1</span> &gt;= methodDeclStr.begin()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (*(it<span class="number">-1</span>) != <span class="string">&#x27; &#x27;</span> &amp;&amp; *(it<span class="number">-1</span>) != <span class="string">&#x27;\n&#x27;</span>) &#123;</span><br><span class="line">                        addViolation(node, this, <span class="string">&quot;方法大括号请遵循空格规范&quot;</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li>@property左括号、右括号、中间逗号、*修饰需要遵循空格规范<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> <span class="title function_">VisitObjCPropertyDecl</span><span class="params">(ObjCPropertyDecl *node)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">string</span> methodDeclStr;</span><br><span class="line">        ASTContext *context = _carrier-&gt;getASTContext();</span><br><span class="line">        SourceLocation begin = node-&gt;getSourceRange().getBegin();</span><br><span class="line">        SourceLocation end = node-&gt;getSourceRange().getEnd(); methodDeclStr.assign(context-&gt;getSourceManager().getCharacterData(begin),end.getRawEncoding()-begin.getRawEncoding());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="built_in">string</span>::iterator it = methodDeclStr.begin(); it!= methodDeclStr.end(); it++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (*it == <span class="string">&#x27;(&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it<span class="number">-2</span> &gt;= methodDeclStr.begin()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (!(*(it<span class="number">-1</span>) == <span class="string">&#x27; &#x27;</span> &amp;&amp; *(it<span class="number">-2</span>) == <span class="string">&#x27;y&#x27;</span>) &amp;&amp; *(it+<span class="number">1</span>) != <span class="string">&#x27;^&#x27;</span>) &#123;</span><br><span class="line">                        addViolation(node, this, node-&gt;getNameAsString() + <span class="string">&quot;@property左括号请遵循空格规范&quot;</span>);</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (*it == <span class="string">&#x27;,&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it+<span class="number">1</span> &lt; methodDeclStr.end()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (*(it+<span class="number">1</span>) != <span class="string">&#x27; &#x27;</span>) &#123;</span><br><span class="line">                        addViolation(node, this, node-&gt;getNameAsString() + <span class="string">&quot;@property中逗号请遵循空格规范&quot;</span>);</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (*it == <span class="string">&#x27;)&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it+<span class="number">1</span> &lt; methodDeclStr.end()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (*(it+<span class="number">1</span>) != <span class="string">&#x27; &#x27;</span>) &#123;</span><br><span class="line">                        addViolation(node, this, node-&gt;getNameAsString() + <span class="string">&quot;@property右括号请遵循空格规范&quot;</span>);</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (*it == <span class="string">&#x27;*&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it<span class="number">-1</span> &gt;= methodDeclStr.begin()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (*(it<span class="number">-1</span>) != <span class="string">&#x27; &#x27;</span>) &#123;</span><br><span class="line">                        addViolation(node, this, node-&gt;getNameAsString() + <span class="string">&quot;@property属性*修饰请遵循空格规范&quot;</span>);</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <h5 id="自定义枚举规范"><a href="#自定义枚举规范" class="headerlink" title="自定义枚举规范"></a>自定义枚举规范</h5></li>
-<li>NS_ENUM/NS_OPTIONSenum<br>经过调试发现enum枚举走VisitEnumDecl方法，而NS_ENUM/NS_OPTIONS均不走。<br><img src="/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-201833.png"><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitEnumDecl</span><span class="params">(EnumDecl *node)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        addViolation(node, <span class="keyword">this</span>, node-&gt;getNameAsString()+<span class="string">&quot;枚举尽量使用NS_ENUM/NS_OPTIONS&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-或者基于AbstractASTMatcherRule匹配<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">callback</span><span class="params">(<span class="keyword">const</span> MatchFinder::MatchResult &amp;result)</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> EnumDecl *enumDecl = result.Nodes.getNodeAs&lt;EnumDecl&gt;(<span class="string">&quot;enumDecl&quot;</span>); </span><br><span class="line">    <span class="keyword">if</span> (enumDecl)</span><br><span class="line">    &#123;</span><br><span class="line">        addViolation(node, <span class="keyword">this</span>, <span class="string">&quot;枚举尽量使用NS_ENUM/NS_OPTIONS&quot;</span>); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">setUpMatcher</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">    addMatcher(enumDecl().bind(<span class="string">&quot;enumDecl&quot;</span>)); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>枚举不要下划线开头<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitEnumConstantDecl</span><span class="params">(EnumConstantDecl *node)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">string</span> name = node-&gt;getNameAsString();</span><br><span class="line">    <span class="built_in">string</span>::iterator itor = name.begin();</span><br><span class="line">    <span class="keyword">if</span>(*itor == <span class="string">&#x27;_&#x27;</span>)&#123;</span><br><span class="line">       addViolation(node, <span class="keyword">this</span>, <span class="string">&quot;枚举不要下划线开头&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="自定义类名规范"><a href="#自定义类名规范" class="headerlink" title="自定义类名规范"></a>自定义类名规范</h5>类名使用大写字母开头<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitObjCProtocolDecl</span><span class="params">(ObjCProtocolDecl *node)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="built_in">string</span> name = node-&gt;getNameAsString();</span><br><span class="line">        <span class="built_in">string</span>::iterator itor = name.begin();</span><br><span class="line">        <span class="keyword">if</span>(!(*itor &gt;= <span class="string">&#x27;A&#x27;</span> &amp;&amp; *itor &lt;= <span class="string">&#x27;Z&#x27;</span>))&#123;</span><br><span class="line">            addViolation(node, <span class="keyword">this</span>, name+<span class="string">&quot;协议名请用大写字母开头&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitObjCImplDecl</span><span class="params">(ObjCImplDecl *node)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="built_in">string</span> name = node-&gt;getNameAsString();</span><br><span class="line">        <span class="built_in">string</span>::iterator itor = name.begin();</span><br><span class="line">        <span class="keyword">if</span>(!(*itor &gt;= <span class="string">&#x27;A&#x27;</span> &amp;&amp; *itor &lt;= <span class="string">&#x27;Z&#x27;</span>))&#123;</span><br><span class="line">            addViolation(node, <span class="keyword">this</span>, name+<span class="string">&quot;类名请用大写字母开头&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="自定义方法格式规范"><a href="#自定义方法格式规范" class="headerlink" title="自定义方法格式规范"></a>自定义方法格式规范</h5>方法参数超过3个，需要折行并冒号对齐<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitObjCMethodDecl</span><span class="params">(ObjCMethodDecl *node)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">string</span> name = node-&gt;getNameAsString();</span><br><span class="line">    <span class="keyword">if</span>( node-&gt;param_size()&gt;_threshold)&#123;</span><br><span class="line">        <span class="built_in">string</span> methodDeclStr;</span><br><span class="line">        ASTContext *context = _carrier-&gt;getASTContext();</span><br><span class="line">        SourceLocation begin = node-&gt;getSourceRange().getBegin();</span><br><span class="line">        SourceLocation end = node-&gt;getSourceRange().getEnd(); methodDeclStr.assign(context-&gt;getSourceManager().getCharacterData(begin),end.getRawEncoding()-node-&gt;getSourceRange().getBegin().getRawEncoding());</span><br><span class="line">        <span class="built_in">string</span> replaceName = formatObjcMethodName(methodDeclStr);</span><br><span class="line">        <span class="keyword">if</span>(methodDeclStr.find(replaceName))&#123;</span><br><span class="line">            addViolation(node, <span class="keyword">this</span>, <span class="string">&quot;方法参数超过&quot;</span>+to_string(_threshold)+<span class="string">&quot;个，需要折行并冒号对齐&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="修正oclint误报规范"><a href="#修正oclint误报规范" class="headerlink" title="修正oclint误报规范"></a>修正oclint误报规范</h5>PreferEarlyExit:使用提前退出/继续来简化代码并减少缩进<br>误报:懒加载与init初始化误判<br>修正思路:识别懒加载与init方法进行判断<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">starts_with</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; s1, <span class="keyword">const</span> <span class="built_in">string</span>&amp; s2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> s2.size() &lt;= s1.size() &amp;&amp; s1.compare(<span class="number">0</span>, s2.size(), s2) == <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 将Property入栈到数组与懒加载比较是否selector相同</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitObjCPropertyDecl</span><span class="params">(ObjCPropertyDecl *node)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">std</span>::find(_arraySelector.begin(), _arraySelector.end(), node-&gt;getNameAsString()) == _arraySelector.end()) &#123;</span><br><span class="line">        _arraySelector.push_back(node-&gt;getNameAsString());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//以init开头的都认为是初始化方法</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitObjCMethodDecl</span><span class="params">(ObjCMethodDecl *node)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">string</span> selectorName = node-&gt;getSelector().getAsString();</span><br><span class="line">    <span class="keyword">if</span> (starts_with(selectorName, <span class="string">&quot;init&quot;</span>) || <span class="built_in">std</span>::find(_arraySelector.begin(), _arraySelector.end(), selectorName) != _arraySelector.end() ) &#123;</span><br><span class="line">        _isSysSelector = <span class="literal">true</span>; </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        _isSysSelector = <span class="literal">false</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>; </span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//通过_isSysSelector修正误报</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitCompoundStmt</span><span class="params">(CompoundStmt* compoundStmt)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (compoundStmt-&gt;size() &lt; <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (_isSysSelector) &#123; </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">auto</span> last = compoundStmt-&gt;body_rbegin();</span><br><span class="line">    <span class="keyword">if</span> (isFlowOfControlInterrupt(*last)) &#123;</span><br><span class="line">        addViolationIfStmtIsLongIf(*++last);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<li>NS_ENUM/NS_OPTIONSenum<br>经过调试发现enum枚举走VisitEnumDecl方法，而NS_ENUM/NS_OPTIONS均不走。<br><img src="/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-201833.png"><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> <span class="title function_">VisitEnumDecl</span><span class="params">(EnumDecl *node)</span></span><br><span class="line">&#123;</span><br><span class="line">        addViolation(node, this, node-&gt;getNameAsString()+<span class="string">&quot;枚举尽量使用NS_ENUM/NS_OPTIONS&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+或者基于AbstractASTMatcherRule匹配<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">virtual <span class="type">void</span> <span class="title function_">callback</span><span class="params">(<span class="type">const</span> MatchFinder::MatchResult &amp;result)</span> override &#123;</span><br><span class="line">    <span class="type">const</span> EnumDecl *enumDecl = result.Nodes.getNodeAs&lt;EnumDecl&gt;(<span class="string">&quot;enumDecl&quot;</span>); </span><br><span class="line">    <span class="keyword">if</span> (enumDecl)</span><br><span class="line">    &#123;</span><br><span class="line">        addViolation(node, this, <span class="string">&quot;枚举尽量使用NS_ENUM/NS_OPTIONS&quot;</span>); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">virtual <span class="type">void</span> <span class="title function_">setUpMatcher</span><span class="params">()</span> override &#123;</span><br><span class="line">    addMatcher(enumDecl().bind(<span class="string">&quot;enumDecl&quot;</span>)); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>枚举不要下划线开头<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> <span class="title function_">VisitEnumConstantDecl</span><span class="params">(EnumConstantDecl *node)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">string</span> name = node-&gt;getNameAsString();</span><br><span class="line">    <span class="built_in">string</span>::iterator itor = name.begin();</span><br><span class="line">    <span class="keyword">if</span>(*itor == <span class="string">&#x27;_&#x27;</span>)&#123;</span><br><span class="line">       addViolation(node, this, <span class="string">&quot;枚举不要下划线开头&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="自定义类名规范"><a href="#自定义类名规范" class="headerlink" title="自定义类名规范"></a>自定义类名规范</h5>类名使用大写字母开头<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> <span class="title function_">VisitObjCProtocolDecl</span><span class="params">(ObjCProtocolDecl *node)</span></span><br><span class="line">&#123;</span><br><span class="line">        <span class="built_in">string</span> name = node-&gt;getNameAsString();</span><br><span class="line">        <span class="built_in">string</span>::iterator itor = name.begin();</span><br><span class="line">        <span class="keyword">if</span>(!(*itor &gt;= <span class="string">&#x27;A&#x27;</span> &amp;&amp; *itor &lt;= <span class="string">&#x27;Z&#x27;</span>))&#123;</span><br><span class="line">            addViolation(node, this, name+<span class="string">&quot;协议名请用大写字母开头&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"><span class="type">bool</span> <span class="title function_">VisitObjCImplDecl</span><span class="params">(ObjCImplDecl *node)</span></span><br><span class="line">&#123;</span><br><span class="line">        <span class="built_in">string</span> name = node-&gt;getNameAsString();</span><br><span class="line">        <span class="built_in">string</span>::iterator itor = name.begin();</span><br><span class="line">        <span class="keyword">if</span>(!(*itor &gt;= <span class="string">&#x27;A&#x27;</span> &amp;&amp; *itor &lt;= <span class="string">&#x27;Z&#x27;</span>))&#123;</span><br><span class="line">            addViolation(node, this, name+<span class="string">&quot;类名请用大写字母开头&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="自定义方法格式规范"><a href="#自定义方法格式规范" class="headerlink" title="自定义方法格式规范"></a>自定义方法格式规范</h5>方法参数超过3个，需要折行并冒号对齐<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> <span class="title function_">VisitObjCMethodDecl</span><span class="params">(ObjCMethodDecl *node)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">string</span> name = node-&gt;getNameAsString();</span><br><span class="line">    <span class="keyword">if</span>( node-&gt;param_size()&gt;_threshold)&#123;</span><br><span class="line">        <span class="built_in">string</span> methodDeclStr;</span><br><span class="line">        ASTContext *context = _carrier-&gt;getASTContext();</span><br><span class="line">        SourceLocation begin = node-&gt;getSourceRange().getBegin();</span><br><span class="line">        SourceLocation end = node-&gt;getSourceRange().getEnd(); methodDeclStr.assign(context-&gt;getSourceManager().getCharacterData(begin),end.getRawEncoding()-node-&gt;getSourceRange().getBegin().getRawEncoding());</span><br><span class="line">        <span class="built_in">string</span> replaceName = formatObjcMethodName(methodDeclStr);</span><br><span class="line">        <span class="keyword">if</span>(methodDeclStr.find(replaceName))&#123;</span><br><span class="line">            addViolation(node, this, <span class="string">&quot;方法参数超过&quot;</span>+to_string(_threshold)+<span class="string">&quot;个，需要折行并冒号对齐&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="修正oclint误报规范"><a href="#修正oclint误报规范" class="headerlink" title="修正oclint误报规范"></a>修正oclint误报规范</h5>PreferEarlyExit:使用提前退出/继续来简化代码并减少缩进<br>误报:懒加载与init初始化误判<br>修正思路:识别懒加载与init方法进行判断<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> <span class="title function_">starts_with</span><span class="params">(<span class="type">const</span> <span class="built_in">string</span>&amp; s1, <span class="type">const</span> <span class="built_in">string</span>&amp; s2)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> s2.size() &lt;= s1.size() &amp;&amp; s1.compare(<span class="number">0</span>, s2.size(), s2) == <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 将Property入栈到数组与懒加载比较是否selector相同</span></span><br><span class="line"><span class="type">bool</span> <span class="title function_">VisitObjCPropertyDecl</span><span class="params">(ObjCPropertyDecl *node)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">std</span>::find(_arraySelector.begin(), _arraySelector.end(), node-&gt;getNameAsString()) == _arraySelector.end()) &#123;</span><br><span class="line">        _arraySelector.push_back(node-&gt;getNameAsString());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//以init开头的都认为是初始化方法</span></span><br><span class="line"><span class="type">bool</span> <span class="title function_">VisitObjCMethodDecl</span><span class="params">(ObjCMethodDecl *node)</span> &#123;</span><br><span class="line">    <span class="built_in">string</span> selectorName = node-&gt;getSelector().getAsString();</span><br><span class="line">    <span class="keyword">if</span> (starts_with(selectorName, <span class="string">&quot;init&quot;</span>) || <span class="built_in">std</span>::find(_arraySelector.begin(), _arraySelector.end(), selectorName) != _arraySelector.end() ) &#123;</span><br><span class="line">        _isSysSelector = <span class="literal">true</span>; </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        _isSysSelector = <span class="literal">false</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>; </span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//通过_isSysSelector修正误报</span></span><br><span class="line"><span class="type">bool</span> <span class="title function_">VisitCompoundStmt</span><span class="params">(CompoundStmt* compoundStmt)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (compoundStmt-&gt;size() &lt; <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (_isSysSelector) &#123; </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">auto</span> last = compoundStmt-&gt;body_rbegin();</span><br><span class="line">    <span class="keyword">if</span> (isFlowOfControlInterrupt(*last)) &#123;</span><br><span class="line">        addViolationIfStmtIsLongIf(*++last);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
 <h5 id="自定义内存泄漏检测"><a href="#自定义内存泄漏检测" class="headerlink" title="自定义内存泄漏检测"></a>自定义内存泄漏检测</h5><p>由于目前xcode对block循环引用在编译时期已有提示:capturing ‘self’ strongly in this block is likely to lead to a retain cycle，但如果API 中的block并未检测。新增了此处关于block强引用的检测。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">setUp</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">    _teamname = RuleConfiguration::stringForKey(<span class="string">&quot;TEAM_NAME&quot;</span>, <span class="string">&quot;xxxxx&quot;</span>);       </span><br><span class="line">    <span class="keyword">this</span>-&gt;ignoreArr.push_back(<span class="string">&quot;UIView&quot;</span>); <span class="comment">// 忽略UIView类的block检测 </span></span><br><span class="line">    <span class="keyword">this</span>-&gt;ignoreArr.push_back(<span class="string">&quot;LCRoutes&quot;</span>);<span class="comment">// 忽略LCRoutes类的block检测</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">tearDown</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isMasnoryBlock</span><span class="params">(BlockDecl *node)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (BlockDecl::param_iterator iterator = node-&gt;param_begin() ; iterator != node-&gt;param_end(); iterator ++) </span><br><span class="line">    &#123;</span><br><span class="line">       <span class="keyword">if</span> ((*iterator)-&gt;getType().getAsString().find(<span class="string">&quot;MASConstraintMaker&quot;</span>) != <span class="built_in">string</span>::npos) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">       <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isIgnoreArrClass</span><span class="params">(ObjCMessageExpr *node)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">string</span> type = node-&gt;getClassReceiver().getAsString();</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;::iterator ret = <span class="built_in">std</span>::find(<span class="keyword">this</span>-&gt;ignoreArr.begin(), <span class="keyword">this</span>-&gt;ignoreArr.end(), type); </span><br><span class="line">    <span class="keyword">if</span>(ret == <span class="keyword">this</span>-&gt;ignoreArr.end()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>; </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitObjCMessageExpr</span><span class="params">(ObjCMessageExpr *node)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>-&gt;isIgnoreArrClass(node)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> argCount = node-&gt;getNumArgs(); </span><br><span class="line">    Expr **exprArray = node-&gt;getArgs(); </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; argCount; i ++ ) &#123;</span><br><span class="line">        BlockExpr *expr = dyn_cast_or_null&lt;BlockExpr&gt;(exprArray[i]); </span><br><span class="line">        <span class="keyword">if</span> (expr &amp;&amp; expr-&gt;getBlockDecl()) &#123;</span><br><span class="line">            BlockDecl *blockDecl = expr-&gt;getBlockDecl();</span><br><span class="line">            <span class="keyword">for</span> (BlockDecl::capture_const_iterator iterator = blockDecl-&gt;capture_begin() ; iterator != blockDecl-&gt;capture_end(); iterator ++) &#123;</span><br><span class="line">                ImplicitParamDecl *implicitParamDecl = dyn_cast_or_null&lt;ImplicitParamDecl&gt;(iterator-&gt;getVariable());</span><br><span class="line">                <span class="keyword">if</span> (implicitParamDecl &amp;&amp; implicitParamDecl-&gt;getName() == <span class="string">&quot;self&quot;</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (!isMasnoryBlock(blockDecl)) &#123; </span><br><span class="line">                        <span class="built_in">string</span> methodDeclStr;</span><br><span class="line">                        ASTContext *context = _carrier-&gt;getASTContext();</span><br><span class="line">                        SourceLocation begin = <span class="keyword">this</span>-&gt;methodDecl-&gt;getSourceRange().getBegin();</span><br><span class="line">                        SourceLocation end = <span class="keyword">this</span>-&gt;methodDecl-&gt;getSourceRange().getEnd(); </span><br><span class="line">                        methodDeclStr.assign(context-&gt;getSourceManager().getCharacterData(begin),end.getRawEncoding()-begin.getRawEncoding());</span><br><span class="line">                        <span class="built_in">string</span> methodblock;</span><br><span class="line">                        SourceLocation beginBlock = node-&gt;getSourceRange().getBegin();</span><br><span class="line">                        SourceLocation endBlock = node-&gt;getSourceRange().getEnd(); </span><br><span class="line">                        methodblock.assign(context-&gt;getSourceManager(). getCharacterData(beginBlock),endBlock.getRawEncoding()-beginBlock.getRawEncoding());</span><br><span class="line">                        <span class="keyword">if</span> (methodDeclStr.find(methodblock)!=<span class="built_in">string</span>::npos &amp;&amp; methodDeclStr.find(<span class="string">&quot;@weakify(self)&quot;</span>)==<span class="built_in">string</span>::npos &amp;&amp; methodDeclStr.find(<span class="string">&quot;__weak&quot;</span>)==<span class="built_in">string</span>::npos &amp;&amp; node-&gt;getSelector().getAsString().find(<span class="string">&quot;animateWithDuration:&quot;</span>)==<span class="built_in">string</span>::npos) </span><br><span class="line">                        &#123;</span><br><span class="line">                            addViolation(blockDecl, <span class="keyword">this</span>,<span class="string">&quot;block中强引用了self，注意使用weak修饰self&quot;</span>); </span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitObjCMethodDecl</span><span class="params">(ObjCMethodDecl *node)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>-&gt;methodDecl = node;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">virtual <span class="type">void</span> <span class="title function_">setUp</span><span class="params">()</span> override &#123;</span><br><span class="line">    _teamname = RuleConfiguration::stringForKey(<span class="string">&quot;TEAM_NAME&quot;</span>, <span class="string">&quot;xxxxx&quot;</span>);       </span><br><span class="line">    this-&gt;ignoreArr.push_back(<span class="string">&quot;UIView&quot;</span>); <span class="comment">// 忽略UIView类的block检测 </span></span><br><span class="line">    this-&gt;ignoreArr.push_back(<span class="string">&quot;LCRoutes&quot;</span>);<span class="comment">// 忽略LCRoutes类的block检测</span></span><br><span class="line">&#125;</span><br><span class="line">virtual <span class="type">void</span> <span class="title function_">tearDown</span><span class="params">()</span> override &#123;&#125;</span><br><span class="line"><span class="type">bool</span> <span class="title function_">isMasnoryBlock</span><span class="params">(BlockDecl *node)</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (BlockDecl::param_iterator iterator = node-&gt;param_begin() ; iterator != node-&gt;param_end(); iterator ++) </span><br><span class="line">    &#123;</span><br><span class="line">       <span class="keyword">if</span> ((*iterator)-&gt;getType().getAsString().find(<span class="string">&quot;MASConstraintMaker&quot;</span>) != <span class="built_in">string</span>::npos) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">       <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="type">bool</span> <span class="title function_">isIgnoreArrClass</span><span class="params">(ObjCMessageExpr *node)</span> &#123;</span><br><span class="line">    <span class="built_in">string</span> type = node-&gt;getClassReceiver().getAsString();</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;::iterator ret = <span class="built_in">std</span>::find(this-&gt;ignoreArr.begin(), this-&gt;ignoreArr.end(), type); </span><br><span class="line">    <span class="keyword">if</span>(ret == this-&gt;ignoreArr.end()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>; </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">bool</span> <span class="title function_">VisitObjCMessageExpr</span><span class="params">(ObjCMessageExpr *node)</span> </span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (this-&gt;isIgnoreArrClass(node)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">int</span> argCount = node-&gt;getNumArgs(); </span><br><span class="line">    Expr **exprArray = node-&gt;getArgs(); </span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; argCount; i ++ ) &#123;</span><br><span class="line">        BlockExpr *expr = dyn_cast_or_null&lt;BlockExpr&gt;(exprArray[i]); </span><br><span class="line">        <span class="keyword">if</span> (expr &amp;&amp; expr-&gt;getBlockDecl()) &#123;</span><br><span class="line">            BlockDecl *blockDecl = expr-&gt;getBlockDecl();</span><br><span class="line">            <span class="keyword">for</span> (BlockDecl::capture_const_iterator iterator = blockDecl-&gt;capture_begin() ; iterator != blockDecl-&gt;capture_end(); iterator ++) &#123;</span><br><span class="line">                ImplicitParamDecl *implicitParamDecl = dyn_cast_or_null&lt;ImplicitParamDecl&gt;(iterator-&gt;getVariable());</span><br><span class="line">                <span class="keyword">if</span> (implicitParamDecl &amp;&amp; implicitParamDecl-&gt;getName() == <span class="string">&quot;self&quot;</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (!isMasnoryBlock(blockDecl)) &#123; </span><br><span class="line">                        <span class="built_in">string</span> methodDeclStr;</span><br><span class="line">                        ASTContext *context = _carrier-&gt;getASTContext();</span><br><span class="line">                        SourceLocation begin = this-&gt;methodDecl-&gt;getSourceRange().getBegin();</span><br><span class="line">                        SourceLocation end = this-&gt;methodDecl-&gt;getSourceRange().getEnd(); </span><br><span class="line">                        methodDeclStr.assign(context-&gt;getSourceManager().getCharacterData(begin),end.getRawEncoding()-begin.getRawEncoding());</span><br><span class="line">                        <span class="built_in">string</span> methodblock;</span><br><span class="line">                        SourceLocation beginBlock = node-&gt;getSourceRange().getBegin();</span><br><span class="line">                        SourceLocation endBlock = node-&gt;getSourceRange().getEnd(); </span><br><span class="line">                        methodblock.assign(context-&gt;getSourceManager(). getCharacterData(beginBlock),endBlock.getRawEncoding()-beginBlock.getRawEncoding());</span><br><span class="line">                        <span class="keyword">if</span> (methodDeclStr.find(methodblock)!=<span class="built_in">string</span>::npos &amp;&amp; methodDeclStr.find(<span class="string">&quot;@weakify(self)&quot;</span>)==<span class="built_in">string</span>::npos &amp;&amp; methodDeclStr.find(<span class="string">&quot;__weak&quot;</span>)==<span class="built_in">string</span>::npos &amp;&amp; node-&gt;getSelector().getAsString().find(<span class="string">&quot;animateWithDuration:&quot;</span>)==<span class="built_in">string</span>::npos) </span><br><span class="line">                        &#123;</span><br><span class="line">                            addViolation(blockDecl, this,<span class="string">&quot;block中强引用了self，注意使用weak修饰self&quot;</span>); </span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">bool</span> <span class="title function_">VisitObjCMethodDecl</span><span class="params">(ObjCMethodDecl *node)</span> &#123;</span><br><span class="line">    this-&gt;methodDecl = node;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
     </div>
@@ -475,26 +381,27 @@
     
     
 
-    <footer class="post-footer">
+      <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/LLVM-Clang/" rel="tag"># LLVM-Clang</a>
           </div>
 
         
 
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2020/08/22/%E5%85%B3%E4%BA%8EWKWebView-%E7%A7%92%E5%BC%80%E6%96%B9%E6%A1%88/" rel="prev" title="关于WKWebView 秒开方案">
-                  <i class="fa fa-chevron-left"></i> 关于WKWebView 秒开方案
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2022/09/22/C-%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/" rel="next" title="C++ 笔记（一）">
-                  C++ 笔记（一） <i class="fa fa-chevron-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/08/22/%E5%85%B3%E4%BA%8EWKWebView-%E7%A7%92%E5%BC%80%E6%96%B9%E6%A1%88/" rel="prev" title="关于WKWebView 秒开方案">
+      <i class="fa fa-chevron-left"></i> 关于WKWebView 秒开方案
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/09/22/C-%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/" rel="next" title="C++ 笔记（一）">
+      C++ 笔记（一） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
   </article>
   
   
@@ -502,7 +409,8 @@
 
 
 
-      
+          </div>
+          
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -511,7 +419,7 @@
       activeClass = localStorage.getItem('comments_active') || activeClass;
     }
     if (activeClass) {
-      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
       if (activeTab) {
         activeTab.click();
       }
@@ -520,20 +428,99 @@
   if (CONFIG.comments.storage) {
     window.addEventListener('tabs:click', event => {
       if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      const commentClass = event.target.classList[1];
+      let commentClass = event.target.classList[1];
       localStorage.setItem('comments_active', commentClass);
     });
   }
 </script>
 
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#LLVM%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">LLVM概念</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Clang%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">Clang概念</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">编译流程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%A7%84%E5%88%99"><span class="nav-number">4.</span> <span class="nav-text">自定义规则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E8%87%AA%E5%AE%9A%E4%B9%89%E8%A7%84%E5%88%99Xcode%E9%A1%B9%E7%9B%AE"><span class="nav-number">5.</span> <span class="nav-text">加载自定义规则Xcode项目</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B9%E7%9B%AE%E7%94%9F%E6%88%90dylib%E6%96%87%E4%BB%B6"><span class="nav-number">6.</span> <span class="nav-text">编译自定义项目生成dylib文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E8%A7%84%E5%88%99"><span class="nav-number">7.</span> <span class="nav-text">调试规则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B"><span class="nav-number">8.</span> <span class="nav-text">查看编译过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B-preprocessor-%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">9.</span> <span class="nav-text">查看 preprocessor(预处理)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90%EF%BC%8C%E7%94%9F%E6%88%90Token"><span class="nav-number">10.</span> <span class="nav-text">词法分析，生成Token</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90%EF%BC%8C%E7%94%9F%E6%88%90%E6%8A%BD%E8%B1%A1AST%E8%AF%AD%E6%B3%95%E6%A0%91"><span class="nav-number">11.</span> <span class="nav-text">语法分析，生成抽象AST语法树</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%A7%84%E5%88%99%E6%BA%90%E7%A0%81"><span class="nav-number">12.</span> <span class="nav-text">自定义规则源码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B1%9E%E6%80%A7%E8%A7%84%E8%8C%83"><span class="nav-number">13.</span> <span class="nav-text">自定义属性规范</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%A9%BA%E6%A0%BC%E8%A7%84%E8%8C%83"><span class="nav-number">14.</span> <span class="nav-text">自定义空格规范</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%9E%9A%E4%B8%BE%E8%A7%84%E8%8C%83"><span class="nav-number">15.</span> <span class="nav-text">自定义枚举规范</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%90%8D%E8%A7%84%E8%8C%83"><span class="nav-number">16.</span> <span class="nav-text">自定义类名规范</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%96%B9%E6%B3%95%E6%A0%BC%E5%BC%8F%E8%A7%84%E8%8C%83"><span class="nav-number">17.</span> <span class="nav-text">自定义方法格式规范</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%AD%A3oclint%E8%AF%AF%E6%8A%A5%E8%A7%84%E8%8C%83"><span class="nav-number">18.</span> <span class="nav-text">修正oclint误报规范</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%A3%80%E6%B5%8B"><span class="nav-number">19.</span> <span class="nav-text">自定义内存泄漏检测</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钟环"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">钟环</p>
+  <div class="site-description" itemprop="description">个人博客,主要涉及移动端、音视频、前沿技术共同学习等方面</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zhonghphuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhonghphuan" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhonghphuan@hotmail.com" title="E-Mail → mailto:zhonghphuan@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
     </div>
-  </main>
+  </aside>
+  <div id="sidebar-dimmer"></div>
 
-  <footer class="footer">
-    <div class="footer-inner">
-      
 
-      
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
 
 <div class="copyright">
   
@@ -543,22 +530,23 @@
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">钟环</span>
-</div>
-<div class="wordcount">
-  <span class="post-meta-item">
+    <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
-      <i class="fa fa-chart-line"></i>
+      <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">51k</span>
-  </span>
-  <span class="post-meta-item">
+    <span title="站点总字数">50k</span>
+    <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">47 分钟</span>
-  </span>
+    <span title="站点阅读时长">46 分钟</span>
 </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
 <div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -567,6 +555,7 @@
         <span id="busuanzi_value_site_uv"></span>
       </span>
     </span>
+    <span class="post-meta-divider">|</span>
     <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-eye"></i>
@@ -576,36 +565,84 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
   </div>
 
-    </div>
-  </footer>
-
   
-  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
     'head title',
-    '.page-configurations',
-    '.main-inner',
+    '#page-configurations',
+    '.content-wrap',
     '.post-toc-wrap',
     '.languages',
-    '.pjax'
+    '#pjax'
   ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
   analytics: false,
   cacheBust: false,
-  scrollRestoration: false,
-  scrollTo: !CONFIG.bookmark.enable
+  scrollTo : !CONFIG.bookmark.enable
 });
 
-document.addEventListener('pjax:success', () => {
-  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
   NexT.boot.refresh();
   // Define Motion Sequence & Bootstrap Motion.
   if (CONFIG.motion.enable) {
@@ -615,34 +652,20 @@ document.addEventListener('pjax:success', () => {
       .add(NexT.motion.middleWares.postList)
       .bootstrap();
   }
-  const hasTOC = document.querySelector('.post-toc');
-  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
-  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
   NexT.utils.updateSidebarPosition();
 });
 </script>
 
 
+
+
   
-
-
-
-
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
 
 
 
 
   
-  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script src="/js/local-search.js"></script>
 
 
 
@@ -651,7 +674,12 @@ document.addEventListener('pjax:success', () => {
 
 
 
-    <div class="pjax">
+
+
+
+
+
+    <div id="pjax">
   
 
   
