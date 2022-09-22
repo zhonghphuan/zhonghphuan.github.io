@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>钟环</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2022-09-22T09:35:09.451Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>钟环</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>C++ 笔记（一）</title>
+    <link href="http://yoursite.com/2022/09/22/C-%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/"/>
+    <id>http://yoursite.com/2022/09/22/C-%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/</id>
+    <published>2022-09-22T09:31:05.000Z</published>
+    <updated>2022-09-22T09:35:09.451Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h3 id=&quot;1、成员函数末尾带const-：-不会修改该对象里任何成员变量的值&quot;&gt;&lt;a href=&quot;#1、成员函数末尾带const-：-不会修改该对象里任何成员变量的值&quot; class=&quot;headerlink&quot; title=&quot;1、成员函数末尾带const ：
+        
+      
+    
+    </summary>
+    
+    
+      <category term="C++" scheme="http://yoursite.com/categories/C/"/>
+    
+    
+      <category term="C++" scheme="http://yoursite.com/tags/C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>iOS LLVM-Clang 浅谈</title>
+    <link href="http://yoursite.com/2020/08/22/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/"/>
+    <id>http://yoursite.com/2020/08/22/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/</id>
+    <published>2020-08-22T12:41:29.000Z</published>
+    <updated>2020-08-22T13:51:52.000Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h5 id=&quot;LLVM概念&quot;&gt;&lt;a href=&quot;#LLVM概念&quot; class=&quot;headerlink&quot; title=&quot;LLVM概念&quot;&gt;&lt;/a&gt;LLVM概念&lt;/h5&gt;&lt;ol&gt;
+&lt;li&gt;LLVM官网: &lt;a href=&quot;https://llvm.org/&quot;&gt;https://llvm.org/&lt;/a&gt; &lt;/li&gt;
+&lt;li&gt;编译器架构图:&lt;br&gt;&lt;img src=&quot;/images/iOS-LLVM-Clang-%E6%B5%85%E8%B0%88/WX20200822-162208.png&quot;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Frontend:前端 → 词法分析、语法分析、语义分析、生成中间代码(LLVM IR) &lt;/li&gt;
+&lt;li&gt;Optimizer:优化器 → 中间代码优化&lt;/li&gt;
+&lt;li&gt;Backend:后端 → 生成机器码&lt;/li&gt;
+&lt;li&gt;传统编译器(如 CGG )的前端和后端没有完全分离，耦合在了一起，因而如果要支持一门新的语言或硬件平台，需要做大量的工作。
+    
+    </summary>
+    
+    
+      <category term="LLVM-Clang" scheme="http://yoursite.com/categories/LLVM-Clang/"/>
+    
+    
+      <category term="LLVM-Clang" scheme="http://yoursite.com/tags/LLVM-Clang/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>关于WKWebView 秒开方案</title>
+    <link href="http://yoursite.com/2020/08/22/%E5%85%B3%E4%BA%8EWKWebView-%E7%A7%92%E5%BC%80%E6%96%B9%E6%A1%88/"/>
+    <id>http://yoursite.com/2020/08/22/%E5%85%B3%E4%BA%8EWKWebView-%E7%A7%92%E5%BC%80%E6%96%B9%E6%A1%88/</id>
+    <published>2020-08-22T07:24:44.000Z</published>
+    <updated>2020-08-22T07:58:20.000Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;WKWebView 秒开方案，不仅需要端上优化，也需要前后端配合，我们业务前期在UIWebView上已经通过各种优化达到了秒开，但是据说由于苹果今年12月份就不允许上架UIWebView，所以我们紧急切换到WKWebView，但由于WKWebView在启动初始化的时候表现还是不如人意，我们的目标是低端机型至少大部分页面也能秒开。经过一系列的优化操作，实现效果和数据都是非常可观的。&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+      <category term="WKWebView" scheme="http://yoursite.com/categories/WKWebView/"/>
+    
+    
+      <category term="WKWebView" scheme="http://yoursite.com/tags/WKWebView/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>iOS 自动化杂谈</title>
+    <link href="http://yoursite.com/2020/08/19/iOS%20%E8%87%AA%E5%8A%A8%E5%8C%96%E6%9D%82%E8%B0%88/"/>
+    <id>http://yoursite.com/2020/08/19/iOS%20%E8%87%AA%E5%8A%A8%E5%8C%96%E6%9D%82%E8%B0%88/</id>
+    <published>2020-08-18T23:47:42.000Z</published>
+    <updated>2020-08-22T03:31:39.000Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;前言：可持续集成自动化的话题已经老生常谈了。目前市面上比较流行的自动化流程工具——Fastlane，Fastlane是用Ruby语言编写的一套自动化工具集和框架，Fastlane的工具集基本上涵盖了打包，签名，测试，部署，发布，库管理等等用起来比较方便，配合Jenkins可持续化集成，基本可以满足大部分的流程自动化。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&quot;/images/iOS-%E8%87%AA%E5%8A%A8%E5%8C%96-%E6%89%93%E5%8C%85/%E8%87%AA%E5%8A%A8%E5%8C%961.jpg&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="自动化" scheme="http://yoursite.com/categories/%E8%87%AA%E5%8A%A8%E5%8C%96/"/>
+    
+    
+      <category term="自动化" scheme="http://yoursite.com/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"/>
+    
+  </entry>
+  
+</feed>
